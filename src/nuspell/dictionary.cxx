@@ -3104,12 +3104,13 @@ auto Dictionary::load_from_path(const std::string& file_path_without_extension)
 	auto path = file_path_without_extension;
 	path += ".aff";
 	std::ifstream aff_file(path);
-	if (!aff_file.fail()) {
-		path.replace(path.size() - 3, 3, "dic");
-		std::ifstream dic_file(path);
-		if (!dic_file.fail())
-			return load_from_aff_dic(aff_file, dic_file);
-	}
+	if (aff_file.fail())
+		return Dictionary();
+	path.replace(path.size() - 3, 3, "dic");
+	std::ifstream dic_file(path);
+	if (dic_file.fail())
+		return Dictionary();
+	return load_from_aff_dic(aff_file, dic_file);
 }
 
 /**
