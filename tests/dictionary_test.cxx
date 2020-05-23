@@ -30,8 +30,6 @@ struct Dict_Test : public nuspell::Dict_Base {
 
 TEST_CASE("Dictionary::load_from_path", "[dictionary]")
 {
-	CHECK_THROWS_AS(Dictionary::load_from_path(""),
-	                Dictionary_Loading_Error);
 }
 TEST_CASE("Dictionary::spell_priv simple", "[dictionary]")
 {

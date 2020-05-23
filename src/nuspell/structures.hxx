@@ -645,10 +645,6 @@ class Hash_Multiset {
 	}
 };
 
-struct Condition_Exception : public std::runtime_error {
-	using std::runtime_error::runtime_error;
-};
-
 /**
  * @brief Limited regular expression matching used in affix entries.
  *
@@ -680,6 +676,13 @@ class Condition {
 	size_t length = 0;
 
 	auto construct() -> void;
+
+	auto clear()
+	{
+		cond.clear();
+		spans.clear();
+		length = 0;
+	}
 
       public:
 	Condition() = default;
@@ -740,16 +743,14 @@ auto Condition<CharT>::construct() -> void
 			continue;
 		}
 		if (cond[i] == ']') {
-			auto what =
-			    "closing bracket has no matching opening bracket";
-			throw Condition_Exception(what);
+			clear();
+			return;
 		}
 		if (cond[i] == '[') {
 			++i;
 			if (i == cond.size()) {
-				auto what = "opening bracket has no matching "
-				            "closing bracket";
-				throw Condition_Exception(what);
+				clear();
+				return;
 			}
 			Span_Type type;
 			if (cond[i] == '^') {
@@ -761,13 +762,12 @@ auto Condition<CharT>::construct() -> void
 			}
 			j = cond.find(']', i);
 			if (j == i) {
-				auto what = "empty bracket expression";
-				throw Condition_Exception(what);
+				clear();
+				return;
 			}
 			if (j == cond.npos) {
-				auto what = "opening bracket has no matching "
-				            "closing bracket";
-				throw Condition_Exception(what);
+				clear();
+				return;
 			}
 			spans.emplace_back(i, j - i, type);
 			++length;
@@ -787,10 +787,8 @@ auto Condition<CharT>::construct() -> void
 template <class CharT>
 auto Condition<CharT>::match(const Str& s, size_t pos, size_t len) const -> bool
 {
-	if (pos > s.size()) {
-		throw std::out_of_range(
-		    "position on the string is out of bounds");
-	}
+	if (pos > s.size())
+		return false;
 	if (s.size() - pos < len)
 		len = s.size() - pos;
 	if (len != length)
@@ -1375,14 +1373,10 @@ class String_Pair {
 	 *
 	 * @param str the string that can be split into a pair.
 	 * @param i the index where the string is split.
-	 * @throws std::out_of_range
 	 */
 	template <class Str1>
 	String_Pair(Str1&& str, size_t i) : i(i), s(std::forward<Str1>(str))
 	{
-		if (i > s.size()) {
-			throw std::out_of_range("word split is too long");
-		}
 	}
 
 	template <class Str1, class Str2,
@@ -1779,15 +1773,11 @@ class List_Basic_Strings {
 	{
 		if (n < sz)
 			return d[n];
-		else
-			throw std::out_of_range("index is out of range");
 	}
 	auto& at(size_type n) const
 	{
 		if (n < sz)
 			return d[n];
-		else
-			throw std::out_of_range("index is out of range");
 	}
 	auto& front() { return d.front(); }
 	auto& front() const { return d.front(); }

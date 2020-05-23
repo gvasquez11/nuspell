@@ -257,11 +257,6 @@ TEST_CASE("Condition<char> 1", "[structures]")
 	CHECK(false == c3.match_suffix("aa"));
 	CHECK(false == c3.match_suffix("ab"));
 	CHECK(true == c3.match_suffix("aba"));
-
-	CHECK_NOTHROW(c3.match("a"));
-	CHECK_THROWS_AS(c3.match("a", 100), std::out_of_range);
-	CHECK_THROWS_WITH(c3.match("a", 100),
-	                  "position on the string is out of bounds");
 }
 
 TEST_CASE("Condition<wchar_t> with wildcards", "[structures]")
@@ -285,39 +280,6 @@ TEST_CASE("Condition<wchar_t> with wildcards", "[structures]")
 	CHECK(true == c2.match_prefix(L"ba"));
 	CHECK(true == c2.match_prefix(L"bab"));
 	CHECK(true == c2.match_prefix(L"aba"));
-}
-
-TEST_CASE("Condition<wchar_t> exceptions", "[structures]")
-{
-	auto cond1 = L"]";
-	CHECK_THROWS_AS(Condition<wchar_t>(cond1), Condition_Exception);
-	CHECK_THROWS_WITH(Condition<wchar_t>(cond1),
-	                  "closing bracket has no matching opening bracket");
-
-	auto cond2 = L"ab]";
-	CHECK_THROWS_AS(Condition<wchar_t>(cond2), Condition_Exception);
-	CHECK_THROWS_WITH(Condition<wchar_t>(cond2),
-	                  "closing bracket has no matching opening bracket");
-
-	auto cond3 = L"[ab";
-	CHECK_THROWS_AS(Condition<wchar_t>(cond3), Condition_Exception);
-	CHECK_THROWS_WITH(Condition<wchar_t>(cond3),
-	                  "opening bracket has no matching closing bracket");
-
-	auto cond4 = L"[";
-	CHECK_THROWS_AS(Condition<wchar_t>(cond4), Condition_Exception);
-	CHECK_THROWS_WITH(Condition<wchar_t>(cond4),
-	                  "opening bracket has no matching closing bracket");
-
-	auto cond5 = L"[]";
-	CHECK_THROWS_AS(Condition<wchar_t>(cond5), Condition_Exception);
-	CHECK_THROWS_WITH(Condition<wchar_t>(cond5),
-	                  "empty bracket expression");
-
-	auto cond6 = L"[^]";
-	CHECK_THROWS_AS(Condition<wchar_t>(cond6), Condition_Exception);
-	CHECK_THROWS_WITH(Condition<wchar_t>(cond6),
-	                  "empty bracket expression");
 }
 
 TEST_CASE("Condition<char> 2", "[structures]")
@@ -530,11 +492,6 @@ TEST_CASE("String_Pair", "[structures]")
 	CHECK(x.idx() == 4);
 	CHECK(x.first() == "6789");
 	CHECK(x.second() == "zxcvbnm");
-
-	CHECK_NOTHROW(String_Pair<char>("6789", 4));
-	CHECK_THROWS_AS(String_Pair<char>("6789", 5), std::out_of_range);
-	CHECK_THROWS_WITH(String_Pair<char>("6789", 5),
-	                  "word split is too long");
 }
 
 TEST_CASE("match_simple_regex", "[structures]")

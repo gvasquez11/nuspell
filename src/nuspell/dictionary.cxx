@@ -3052,8 +3052,7 @@ auto Dict_Base::expand_root_word_for_ngram(
 Dictionary::Dictionary(std::istream& aff, std::istream& dic)
     : external_locale_known_utf8(true)
 {
-	if (!parse_aff_dic(aff, dic))
-		throw Dictionary_Loading_Error("error parsing");
+	parse_aff_dic(aff, dic);
 }
 
 auto Dictionary::external_to_internal_encoding(const string& in,
@@ -3086,7 +3085,6 @@ Dictionary::Dictionary() : external_locale_known_utf8(true) {}
  * @param aff The iostream of the .aff file
  * @param dic The iostream of the .dic file
  * @return Dictionary object
- * @throws Dictionary_Loading_Error on error
  */
 auto Dictionary::load_from_aff_dic(std::istream& aff, std::istream& dic)
     -> Dictionary
@@ -3099,7 +3097,6 @@ auto Dictionary::load_from_aff_dic(std::istream& aff, std::istream& dic)
  * @param file_path_without_extension path *without* extensions (without .dic or
  * .aff)
  * @return Dictionary object
- * @throws Dictionary_Loading_Error on error
  */
 auto Dictionary::load_from_path(const std::string& file_path_without_extension)
     -> Dictionary
@@ -3107,17 +3104,12 @@ auto Dictionary::load_from_path(const std::string& file_path_without_extension)
 	auto path = file_path_without_extension;
 	path += ".aff";
 	std::ifstream aff_file(path);
-	if (aff_file.fail()) {
-		auto err = "Aff file " + path + " not found";
-		throw Dictionary_Loading_Error(err);
+	if (!aff_file.fail()) {
+		path.replace(path.size() - 3, 3, "dic");
+		std::ifstream dic_file(path);
+		if (!dic_file.fail())
+			return load_from_aff_dic(aff_file, dic_file);
 	}
-	path.replace(path.size() - 3, 3, "dic");
-	std::ifstream dic_file(path);
-	if (dic_file.fail()) {
-		auto err = "Dic file " + path + " not found";
-		throw Dictionary_Loading_Error(err);
-	}
-	return load_from_aff_dic(aff_file, dic_file);
 }
 
 /**
