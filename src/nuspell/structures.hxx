@@ -787,8 +787,7 @@ auto Condition<CharT>::construct() -> void
 template <class CharT>
 auto Condition<CharT>::match(const Str& s, size_t pos, size_t len) const -> bool
 {
-	if (pos > s.size())
-		return false;
+	assert(pos <= s.size());
 	if (s.size() - pos < len)
 		len = s.size() - pos;
 	if (len != length)
@@ -1377,6 +1376,7 @@ class String_Pair {
 	template <class Str1>
 	String_Pair(Str1&& str, size_t i) : i(i), s(std::forward<Str1>(str))
 	{
+		assert(i <= s.size());
 	}
 
 	template <class Str1, class Str2,
@@ -1771,13 +1771,13 @@ class List_Basic_Strings {
 	auto& operator[](size_type n) const { return d[n]; }
 	auto& at(size_type n)
 	{
-		if (n < sz)
-			return d[n];
+		assert(n < sz);
+		return d[n];
 	}
 	auto& at(size_type n) const
 	{
-		if (n < sz)
-			return d[n];
+		assert(n < sz);
+		return d[n];
 	}
 	auto& front() { return d.front(); }
 	auto& front() const { return d.front(); }
