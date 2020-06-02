@@ -21,7 +21,6 @@
 
 #include <fstream>
 #include <iostream>
-#include <stdexcept>
 
 #include <unicode/uchar.h>
 

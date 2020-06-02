@@ -29,7 +29,6 @@
 #include <functional>
 #include <iterator>
 #include <stack>
-#include <stdexcept>
 #include <string>
 #include <string_view>
 #include <utility>
